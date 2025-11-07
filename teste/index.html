@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <title>Deck Apresentação</title>
+  <style>
+    /* BRAND & THEME */
+    :root {
+      --brand-purple: #7A3CFF;
+      --brand-deep-blue: #0A1330;
+      --brand-cyan: #08D6FF;
+      --brand-purple-2: #5F2AFF;
+      --text-strong: #E9ECF5;
+      --text-dim: #B8C0D6;
+      --bg: #050814;
+      --border: #27304A;
+      --radius: 14px;
+      --gap: 28px;
+      --maxw: 1280px;
+      --bg-gradient: radial-gradient(circle at 10% 20%, rgba(8, 214, 255, 0.18) 0%, transparent 40%),
+        radial-gradient(circle at 80% 0%, rgba(122, 60, 255, 0.22) 0%, transparent 45%),
+        linear-gradient(135deg, rgba(10, 19, 48, 0.92) 0%, rgba(31, 16, 69, 0.94) 50%, rgba(10, 19, 48, 0.98) 100%);
+      --ink-gradient: linear-gradient(92deg, var(--brand-cyan) 0%, var(--brand-purple) 50%, var(--brand-purple-2) 100%);
+      color-scheme: dark;
+    }
+
+    /* RESET */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-strong);
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      padding: clamp(16px, 3vw, 48px);
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    :focus-visible {
+      outline: 3px solid var(--brand-cyan);
+      outline-offset: 3px;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 20% 80%, rgba(8, 214, 255, 0.12), transparent 55%),
+        radial-gradient(circle at 90% 40%, rgba(95, 42, 255, 0.14), transparent 55%);
+      pointer-events: none;
+      z-index: -2;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(160deg, rgba(5, 8, 20, 0.5) 0%, rgba(5, 8, 20, 0.9) 100%);
+      z-index: -1;
+    }
+
+    /* BRAND HEADER */
+    .brand-header {
+      position: fixed;
+      top: 16px;
+      left: 24px;
+      display: none;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(5, 8, 20, 0.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(39, 48, 74, 0.6);
+      z-index: 10;
+    }
+
+    body.show-brand .brand-header {
+      display: flex;
+    }
+
+    /* DECK & SLIDES */
+    .deck {
+      position: relative;
+      width: min(100%, var(--maxw));
+      display: grid;
+      grid-template-rows: 1fr auto auto;
+      gap: 16px;
+    }
+
+    .slides {
+      position: relative;
+      height: calc(100dvh - clamp(120px, 15vh, 180px));
+      max-height: 720px;
+      overflow: hidden;
+      border-radius: var(--radius);
+      touch-action: pan-y;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: clamp(24px, 4vw, 64px);
+      background: rgba(9, 14, 34, 0.72);
+      border: 1px solid rgba(39, 48, 74, 0.65);
+      border-radius: var(--radius);
+      backdrop-filter: blur(12px) saturate(120%);
+      box-shadow: 0 32px 70px rgba(5, 8, 20, 0.45);
+      display: flex;
+      flex-direction: column;
+      gap: var(--gap);
+      opacity: 0;
+      transform: translate3d(40px, 0, 0) scale(0.98);
+      transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1), opacity 320ms ease;
+      overflow: hidden;
+    }
+
+    .slide.active {
+      position: relative;
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1);
+      z-index: 2;
+    }
+
+    .slide.exit-left {
+      transform: translate3d(-40px, 0, 0) scale(0.96);
+      opacity: 0;
+    }
+
+    .slide.exit-right {
+      transform: translate3d(40px, 0, 0) scale(0.96);
+      opacity: 0;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    h1 {
+      font-size: clamp(2.4rem, 4vw, 4.2rem);
+    }
+
+    h2 {
+      font-size: clamp(2rem, 3vw, 3.2rem);
+    }
+
+    h3 {
+      font-size: clamp(1.35rem, 2.1vw, 2rem);
+    }
+
+    .brand-gradient {
+      background: var(--ink-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    p {
+      margin: 0;
+      color: var(--text-dim);
+      font-size: clamp(1rem, 1.5vw, 1.2rem);
+      line-height: 1.6;
+    }
+
+    .kicker {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--brand-cyan);
+    }
+
+    .row {
+      display: grid;
+      gap: var(--gap);
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    }
+
+    .full-bleed {
+      margin-inline: calc(-1 * clamp(24px, 4vw, 64px));
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+    }
+
+    .figure {
+      border: 1px solid rgba(39, 48, 74, 0.8);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: rgba(10, 19, 48, 0.7);
+    }
+
+    .card {
+      border: 1px solid rgba(39, 48, 74, 0.7);
+      border-radius: var(--radius);
+      padding: clamp(20px, 3vw, 32px);
+      background: rgba(7, 10, 24, 0.72);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      display: grid;
+      gap: 12px;
+    }
+
+    .card p {
+      color: var(--text-dim);
+    }
+
+    .cta {
+      align-self: start;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: calc(var(--radius) - 4px);
+      border: 1px solid rgba(8, 214, 255, 0.5);
+      background: linear-gradient(135deg, rgba(8, 214, 255, 0.15), rgba(122, 60, 255, 0.25));
+      transition: transform 200ms ease, box-shadow 200ms ease;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .cta:hover,
+    .cta:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(8, 214, 255, 0.25);
+    }
+
+    ul,
+    ol {
+      margin: 0;
+      padding-left: 1.25rem;
+      display: grid;
+      gap: 8px;
+      color: var(--text-dim);
+      font-size: clamp(1rem, 1.6vw, 1.15rem);
+    }
+
+    .check li::marker {
+      content: "✓ ";
+      color: #4ade80;
+      font-weight: 700;
+    }
+
+    .cross li::marker {
+      content: "✗ ";
+      color: #f87171;
+      font-weight: 700;
+    }
+
+    .decimal {
+      list-style: decimal;
+      padding-left: 1.4rem;
+    }
+
+    .blockquote {
+      border-left: 4px solid rgba(8, 214, 255, 0.45);
+      padding-left: 16px;
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    pre,
+    code {
+      font-family: "Fira Code", "SFMono-Regular", "Consolas", monospace;
+      font-size: 0.95rem;
+    }
+
+    pre {
+      margin: 0;
+      padding: 18px 20px;
+      border-radius: calc(var(--radius) - 4px);
+      border: 1px solid rgba(39, 48, 74, 0.8);
+      background: rgba(6, 11, 26, 0.85);
+      overflow: auto;
+    }
+
+    code {
+      color: var(--text-strong);
+    }
+
+    .progress {
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(39, 48, 74, 0.45);
+      overflow: hidden;
+    }
+
+    .progress i {
+      display: block;
+      height: 100%;
+      width: 12%;
+      border-radius: inherit;
+      background: var(--ink-gradient);
+      transition: width 240ms ease;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.95rem;
+      color: rgba(232, 235, 245, 0.78);
+    }
+
+    .notes {
+      display: none;
+      border: 1px solid rgba(39, 48, 74, 0.65);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      background: rgba(7, 10, 24, 0.82);
+      color: var(--text-dim);
+      font-size: 0.95rem;
+      line-height: 1.5;
+      min-height: 64px;
+    }
+
+    .deck.notes-on .notes {
+      display: block;
+    }
+
+    .deck.overview .slides {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      overflow: auto;
+      height: calc(100dvh - 96px);
+    }
+
+    .deck.overview .slide {
+      position: relative;
+      opacity: 1;
+      transform: none;
+      height: 220px;
+      cursor: pointer;
+      box-shadow: 0 16px 40px rgba(5, 8, 20, 0.35);
+    }
+
+    .deck.overview .slide::after {
+      content: attr(data-index);
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      font-size: 0.9rem;
+      color: rgba(232, 235, 245, 0.6);
+    }
+
+    .deck.overview .slide .row {
+      grid-template-columns: 1fr;
+    }
+
+    .deck.overview .slide .figure,
+    .deck.overview .slide .card {
+      opacity: 0.95;
+    }
+
+    /* PRINT */
+    @media print {
+      body {
+        padding: 0;
+        background: #fff;
+        color: #000;
+      }
+
+      body::before,
+      body::after,
+      .progress,
+      .footer,
+      .brand-header,
+      .deck::before {
+        display: none !important;
+      }
+
+      .deck {
+        width: 100%;
+        gap: 0;
+      }
+
+      .slides {
+        display: block;
+        height: auto;
+        max-height: none;
+        overflow: visible;
+      }
+
+      .slide {
+        position: static;
+        box-shadow: none;
+        border: none;
+        border-radius: 0;
+        background: #fff;
+        color: #000;
+        -webkit-print-color-adjust: exact;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      .slide .brand-gradient {
+        background: none;
+        color: #4b2aff;
+      }
+
+      .deck.overview .slide::after {
+        color: #555;
+      }
+
+      .notes {
+        display: none !important;
+      }
+    }
+
+    /* REDUCED MOTION */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 16px;
+      }
+
+      .slides {
+        height: calc(100dvh - 140px);
+      }
+
+      .slide {
+        gap: 20px;
+      }
+
+      .cta {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="brand-header" aria-hidden="true">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 32" width="120" height="32" role="img" aria-label="Marca Deck">
+      <defs>
+        <linearGradient id="brand-logo" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#08D6FF"></stop>
+          <stop offset="50%" stop-color="#7A3CFF"></stop>
+          <stop offset="100%" stop-color="#5F2AFF"></stop>
+        </linearGradient>
+      </defs>
+      <rect width="120" height="32" rx="8" fill="#0A1330"></rect>
+      <text x="60" y="21" fill="url(#brand-logo)" font-family="system-ui, sans-serif" font-size="18" font-weight="700" text-anchor="middle">DeckX</text>
+    </svg>
+  </header>
+  <main class="deck" data-total="8">
+    <div class="slides" role="list">
+      <section class="slide active" id="slide-1" data-index="1" data-notes="Abrir com energia, reforçar entendimento do problema do cliente e antecipar transformação desejada." role="group" aria-roledescription="slide" aria-label="Slide 1 de 8">
+        <p class="kicker">Apresentação</p>
+        <h1><span class="brand-gradient">Nova Jornada</span> Digital</h1>
+        <p>Mostre ao cliente como a solução conecta necessidades reais a resultados mensuráveis e experiência inesquecível.</p>
+        <div class="row">
+          <article class="card">
+            <h2>O que você vai ver</h2>
+            <ul class="check">
+              <li>Diagnóstico direto das fricções</li>
+              <li>Arquitetura pronta para escalar</li>
+              <li>Próximos passos claros</li>
+            </ul>
+          </article>
+          <figure class="figure">
+            <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20960%20720%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%2308D6FF%22/%3E%3Cstop%20offset%3D%2260%25%22%20stop-color%3D%22%237A3CFF%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%230A1330%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%22960%22%20height%3D%22720%22%20fill%3D%22%23050814%22/%3E%3Crect%20x%3D%2240%22%20y%3D%2240%22%20width%3D%22880%22%20height%3D%22640%22%20rx%3D%2248%22%20fill%3D%22url%28%23g%29%22%20opacity%3D%220.9%22/%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2252%25%22%20font-family%3D%22system-ui%22%20font-size%3D%2264%22%20fill%3D%22%23E9ECF5%22%20text-anchor%3D%22middle%22%20opacity%3D%220.8%22%3EVisual%20Placeholder%3C/text%3E%3C/svg%3E" alt="Ilustração abstrata de inovação" loading="lazy">
+          </figure>
+        </div>
+      </section>
+      <section class="slide" id="slide-2" data-index="2" data-notes="Enfatizar números críticos e trazer relatos curtos para gerar empatia imediata." role="group" aria-roledescription="slide" aria-label="Slide 2 de 8">
+        <h2 class="brand-gradient">Onde estamos hoje</h2>
+        <div class="row">
+          <div>
+            <h3>Fricções atuais</h3>
+            <ul class="cross">
+              <li>Fluxos fragmentados entre equipes</li>
+              <li>Tempo alto de resposta ao paciente</li>
+              <li>Ausência de visão em tempo real</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Métricas que importam</h3>
+            <ol class="decimal">
+              <li>Net Promoter Score abaixo de 40</li>
+              <li>Conversão digital em 11%</li>
+              <li>Custo de aquisição 2x acima do alvo</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+      <section class="slide" id="slide-3" data-index="3" data-notes="Desenhar claramente pilares técnicos e garantir entendimento da escalabilidade." role="group" aria-roledescription="slide" aria-label="Slide 3 de 8">
+        <h2 class="brand-gradient">Arquitetura proposta</h2>
+        <figure class="figure full-bleed">
+          <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20960%20540%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22grid%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%220%25%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%2308D6FF%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%237A3CFF%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%22960%22%20height%3D%22540%22%20fill%3D%22%23050814%22/%3E%3Cg%20stroke%3D%22rgba%28142%2C150%2C190%2C0.35%29%22%20stroke-width%3D%221%22%3E%3Cpath%20d%3D%22M80%2080H880V460H80z%22%20fill%3D%22none%22/%3E%3Cpath%20d%3D%22M80%20220H880%22/%3E%3Cpath%20d%3D%22M80%20340H880%22/%3E%3Cpath%20d%3D%22M320%2080V460%22/%3E%3Cpath%20d%3D%22M560%2080V460%22/%3E%3C/g%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22url%28%23grid%29%22%20stroke-width%3D%226%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M140%20180%20C260%20120%20360%20160%20420%20240%22/%3E%3Cpath%20d%3D%22M420%20240%20C480%20320%20580%20320%20660%20260%22/%3E%3Cpath%20d%3D%22M660%20260%20C760%20200%20820%20220%20860%20280%22/%3E%3C/g%3E%3Cg%20fill%3D%22%23E9ECF5%22%20font-family%3D%22system-ui%22%20font-size%3D%2228%22%20font-weight%3D%22600%22%3E%3Ctext%20x%3D%22120%22%20y%3D%22420%22%3EDados%3C/text%3E%3Ctext%20x%3D%22360%22%20y%3D%22420%22%3EServi%C3%A7os%3C/text%3E%3Ctext%20x%3D%22600%22%20y%3D%22420%22%3EExperi%C3%AAncia%3C/text%3E%3C/g%3E%3C/svg%3E" alt="Diagrama esquemático da arquitetura" loading="lazy">
+        </figure>
+        <article class="card">
+          <h3>Pilares</h3>
+          <p>Camadas desacopladas, microsserviços observáveis e plataforma de dados em tempo real mantendo governança rígida.</p>
+        </article>
+      </section>
+      <section class="slide" id="slide-4" data-index="4" data-notes="Guiar narrativa destacando experiência do usuário e preparar terreno para demo ao vivo." role="group" aria-roledescription="slide" aria-label="Slide 4 de 8">
+        <h2 class="brand-gradient">História guiada</h2>
+        <div class="row">
+          <div>
+            <h3>Fluxo resumido</h3>
+            <ol class="decimal">
+              <li>Paciente inicia jornada via portal omnichannel</li>
+              <li>IA personalizada sugere próxima ação</li>
+              <li>Orquestração confirma agenda e follow-up</li>
+            </ol>
+          </div>
+          <div>
+            <pre><code>{
+  "evento": "agendamento",
+  "canal": "web",
+  "prioridade": "alta",
+  "contexto": {
+    "pacienteId": "PT-2045",
+    "especialidade": "cardio",
+    "sintoma": "taquicardia"
+  }
+}</code></pre>
+          </div>
+        </div>
+      </section>
+      <section class="slide" id="slide-5" data-index="5" data-notes="Aproximar-se de indicadores estratégicos e reforçar confiabilidade da medição." role="group" aria-roledescription="slide" aria-label="Slide 5 de 8">
+        <h2 class="brand-gradient">KPIs de sucesso</h2>
+        <div class="row">
+          <div>
+            <ul class="check">
+              <li>Satisfação do paciente +35%</li>
+              <li>Redução de SLA em 48h</li>
+              <li>Conversão digital +22%</li>
+              <li>Retenção anual +18%</li>
+            </ul>
+          </div>
+          <article class="card">
+            <h3>Observabilidade</h3>
+            <p>Dashboards em tempo real cruzando dados clínicos, operacionais e financeiros com alertas proativos e auditoria completa.</p>
+            <a class="cta" href="#" role="button">Abrir Demo</a>
+          </article>
+        </div>
+      </section>
+      <section class="slide" id="slide-6" data-index="6" data-notes="Reforçar impacto humano conectando dados com sentimentos do paciente." role="group" aria-roledescription="slide" aria-label="Slide 6 de 8">
+        <h2 class="brand-gradient">Experiência do paciente, ponta a ponta</h2>
+        <figure class="figure">
+          <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20960%20640%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22bg%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%230A1330%22/%3E%3Cstop%20offset%3D%2250%25%22%20stop-color%3D%22%235F2AFF%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%2308D6FF%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%22960%22%20height%3D%22640%22%20fill%3D%22url%28%23bg%29%22/%3E%3Cg%20fill%3D%22rgba%285%2C8%2C20%2C0.55%29%22%20stroke%3D%22rgba%28233%2C236%2C245%2C0.35%29%22%20stroke-width%3D%223%22%3E%3Ccircle%20cx%3D%22200%22%20cy%3D%22200%22%20r%3D%2290%22/%3E%3Ccircle%20cx%3D%22480%22%20cy%3D%22180%22%20r%3D%2290%22/%3E%3Ccircle%20cx%3D%22760%22%20cy%3D%22220%22%20r%3D%2290%22/%3E%3Ccircle%20cx%3D%22360%22%20cy%3D%22420%22%20r%3D%2290%22/%3E%3Ccircle%20cx%3D%22620%22%20cy%3D%22440%22%20r%3D%2290%22/%3E%3C/g%3E%3Cg%20fill%3D%22%23E9ECF5%22%20font-family%3D%22system-ui%22%20font-size%3D%2228%22%20font-weight%3D%22600%22%3E%3Ctext%20x%3D%22200%22%20y%3D%22210%22%20text-anchor%3D%22middle%22%3EDescoberta%3C/text%3E%3Ctext%20x%3D%22480%22%20y%3D%22190%22%20text-anchor%3D%22middle%22%3ETriagem%3C/text%3E%3Ctext%20x%3D%22760%22%20y%3D%22230%22%20text-anchor%3D%22middle%22%3EAtendimento%3C/text%3E%3Ctext%20x%3D%22360%22%20y%3D%22430%22%20text-anchor%3D%22middle%22%3EFollow-up%3C/text%3E%3Ctext%20x%3D%22620%22%20y%3D%22450%22%20text-anchor%3D%22middle%22%3EFideliza%C3%A7%C3%A3o%3C/text%3E%3C/g%3E%3C/svg%3E" alt="Paciente interagindo com equipe multidisciplinar" loading="lazy">
+        </figure>
+      </section>
+      <section class="slide" id="slide-7" data-index="7" data-notes="Ressaltar entregas rápidas e visão clara de evolução em etapas." role="group" aria-roledescription="slide" aria-label="Slide 7 de 8">
+        <h2 class="brand-gradient">Roadmap</h2>
+        <div class="row">
+          <div>
+            <h3>Fase 1 — MVP (2 semanas)</h3>
+            <ul class="check">
+              <li>Integração omnichannel piloto</li>
+              <li>Dashboard operacional inicial</li>
+              <li>Playbook de atendimento revisado</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Fase 2 — Escala</h3>
+            <ul class="check">
+              <li>Expansão para unidades satélite</li>
+              <li>Modelos de previsão contínua</li>
+              <li>Automação de comunicação pós-alta</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      <section class="slide" id="slide-8" data-index="8" data-notes="Fechar com call to action direto e alinhar próximos passos imediatos." role="group" aria-roledescription="slide" aria-label="Slide 8 de 8">
+        <h2 class="brand-gradient">Pronto para avançar</h2>
+        <p>Estamos preparados para conduzir a implantação com governança sólida, transferência de conhecimento e suporte integral.</p>
+        <a class="cta" href="#" role="button">Solicitar Proposta Técnica</a>
+      </section>
+    </div>
+    <div class="progress" aria-hidden="true"><i></i></div>
+    <footer class="footer">
+      <span class="page-info" aria-live="polite">1 / 8</span>
+      <span class="brand-text">Deck Digital</span>
+    </footer>
+    <aside class="notes" aria-live="polite" aria-atomic="true"></aside>
+  </main>
+  <!--
+  INSTRUÇÕES DE USO
+  - Editar slides: atualizar ou duplicar <section class="slide"> dentro do bloco <div class="slides">.
+  - Alterar cores: modificar as variáveis em :root dentro do bloco <style> no topo deste arquivo.
+  - Adicionar/remover slides: inserir ou remover seções; o script ajusta hashes automaticamente conforme a ordem no DOM.
+  - Ativar marca: aplicar a classe .show-brand no elemento <body>.
+  - Exportar PDF: usar Ctrl/Cmd+P e definir modo "Ajustar"/"Sem margens".
+  - Deploy em Vercel/Netlify: conectar o repositório e cada push gerará redeploy automático.
+
+  CHECKLIST DE ACEITAÇÃO
+  - ArrowRight e Space avançam; ArrowLeft volta; Home e End funcionam.
+  - o alterna overview e permite clicar em miniatura para abrir o slide correto.
+  - n alterna notas; notas vêm de data-notes.
+  - #3 na URL abre o 3º slide; mudar de slide atualiza o hash.
+  - Barra de progresso reflete a posição corretamente.
+  - Swipe direita/esquerda funciona em mobile.
+  - Impressão: sem fundos pesados, cada slide vira página limpa.
+  - Foco visível em elementos interativos; contraste OK.
+  - prefers-reduced-motion remove transições exageradas.
+  - Sem erros no console, sem dependências externas.
+  -->
+  <script>
+    (() => {
+      const deckEl = document.querySelector('.deck');
+      if (!deckEl) return;
+
+      const slidesEl = deckEl.querySelector('.slides');
+      if (!slidesEl) return;
+      const slides = Array.from(deckEl.querySelectorAll('.slide'));
+      if (!slides.length) return;
+      const progressEl = deckEl.querySelector('.progress i');
+      const pageInfoEl = deckEl.querySelector('.page-info');
+      const notesEl = deckEl.querySelector('.notes');
+      const total = slides.length;
+      let index = slides.findIndex((slide) => slide.classList.contains('active'));
+      if (index < 0) index = 0;
+      let suppressHash = false;
+      let pointerStart = null;
+
+      const clampIndex = (value) => Math.max(0, Math.min(total - 1, value));
+
+      const removeExitState = (slide) => {
+        if (!slide) return;
+        slide.classList.remove('exit-left', 'exit-right');
+      };
+
+      const scheduleExitCleanup = (slide) => {
+        if (!slide) return;
+        const handler = (event) => {
+          if (event.propertyName === 'transform') {
+            slide.removeEventListener('transitionend', handler);
+            removeExitState(slide);
+          }
+        };
+        slide.addEventListener('transitionend', handler, { once: true });
+      };
+
+      const updateUI = () => {
+        if (pageInfoEl) {
+          pageInfoEl.textContent = `${index + 1} / ${total}`;
+        }
+        if (progressEl) {
+          const percent = ((index + 1) / total) * 100;
+          progressEl.style.width = `${percent}%`;
+        }
+        if (notesEl) {
+          notesEl.textContent = slides[index]?.dataset.notes || '';
+        }
+        if (!suppressHash) {
+          const hash = `#${index + 1}`;
+          if (location.hash !== hash) {
+            location.hash = hash;
+          }
+        }
+      };
+
+      const applyIndex = (target, direction = 0) => {
+        const nextIndex = clampIndex(target);
+        if (nextIndex === index) {
+          updateUI();
+          return;
+        }
+
+        const previousSlide = slides[index];
+        const nextSlide = slides[nextIndex];
+        const dir = direction || (nextIndex > index ? 1 : -1);
+
+        slides.forEach((slide, slideIndex) => {
+          if (slideIndex !== nextIndex && slide !== previousSlide) {
+            slide.classList.remove('active', 'exit-left', 'exit-right');
+            slide.setAttribute('aria-hidden', 'true');
+          }
+        });
+
+        if (previousSlide) {
+          previousSlide.classList.remove('active');
+          previousSlide.classList.add(dir > 0 ? 'exit-left' : 'exit-right');
+          previousSlide.setAttribute('aria-hidden', 'true');
+          scheduleExitCleanup(previousSlide);
+        }
+
+        if (nextSlide) {
+          nextSlide.classList.add('active');
+          nextSlide.classList.remove('exit-left', 'exit-right');
+          nextSlide.setAttribute('aria-hidden', 'false');
+        }
+
+        index = nextIndex;
+        updateUI();
+      };
+
+      const next = () => applyIndex(index + 1, 1);
+      const prev = () => applyIndex(index - 1, -1);
+      const first = () => applyIndex(0, -1);
+      const last = () => applyIndex(total - 1, 1);
+
+      const parseHash = () => {
+        const value = Number(location.hash.replace('#', ''));
+        if (!Number.isNaN(value)) {
+          const target = clampIndex(value - 1);
+          suppressHash = true;
+          applyIndex(target, target > index ? 1 : -1);
+          suppressHash = false;
+        }
+      };
+
+      const toggleOverview = () => {
+        deckEl.classList.toggle('overview');
+        if (!deckEl.classList.contains('overview')) {
+          slides[index]?.scrollIntoView({ block: 'center' });
+        }
+      };
+
+      const toggleNotes = () => {
+        deckEl.classList.toggle('notes-on');
+      };
+
+      const isTextInput = (element) => {
+        if (!element) return false;
+        const tag = element.tagName;
+        return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || element.isContentEditable;
+      };
+
+      const handleKeydown = (event) => {
+        if (event.defaultPrevented) return;
+        const key = event.key;
+        const target = event.target;
+
+        if ((key === ' ' || key === 'Spacebar') && isTextInput(target)) {
+          return;
+        }
+
+        switch (key) {
+          case 'ArrowRight':
+          case 'PageDown':
+            event.preventDefault();
+            next();
+            break;
+          case 'ArrowLeft':
+          case 'PageUp':
+            event.preventDefault();
+            prev();
+            break;
+          case 'Home':
+            event.preventDefault();
+            first();
+            break;
+          case 'End':
+            event.preventDefault();
+            last();
+            break;
+          case ' ': // Space
+          case 'Spacebar':
+            event.preventDefault();
+            next();
+            break;
+          default: {
+            const lower = key.toLowerCase();
+            if (!event.altKey && !event.metaKey && !event.ctrlKey) {
+              if (lower === 'o') {
+                event.preventDefault();
+                toggleOverview();
+              }
+              if (lower === 'n') {
+                event.preventDefault();
+                toggleNotes();
+              }
+            }
+          }
+        }
+      };
+
+      const handleClick = (event) => {
+        if (deckEl.classList.contains('overview')) return;
+        const interactive = event.target.closest('a, button, input, textarea, select, label');
+        if (interactive) return;
+        const slide = event.target.closest('.slide');
+        if (!slide) return;
+        next();
+      };
+
+      const handleOverviewClick = (event) => {
+        if (!deckEl.classList.contains('overview')) return;
+        const targetSlide = event.target.closest('.slide');
+        if (!targetSlide) return;
+        const targetIndex = Number(targetSlide.dataset.index) - 1;
+        deckEl.classList.remove('overview');
+        applyIndex(targetIndex, targetIndex > index ? 1 : -1);
+      };
+
+      const handlePointerDown = (event) => {
+        if (event.pointerType === 'mouse') return;
+        pointerStart = {
+          id: event.pointerId,
+          x: event.clientX,
+          y: event.clientY
+        };
+      };
+
+      const handlePointerUp = (event) => {
+        if (!pointerStart || event.pointerId !== pointerStart.id) return;
+        const dx = event.clientX - pointerStart.x;
+        const dy = event.clientY - pointerStart.y;
+        pointerStart = null;
+        if (Math.abs(dx) < 40 || Math.abs(dx) <= Math.abs(dy)) return;
+        if (dx < 0) {
+          next();
+        } else {
+          prev();
+        }
+      };
+
+      const handlePointerCancel = (event) => {
+        if (pointerStart && event.pointerId === pointerStart.id) {
+          pointerStart = null;
+        }
+      };
+
+      const init = () => {
+        slides.forEach((slide, slideIndex) => {
+          slide.setAttribute('aria-hidden', slideIndex === index ? 'false' : 'true');
+          slide.dataset.index = String(slideIndex + 1);
+        });
+
+        updateUI();
+
+        window.addEventListener('keydown', handleKeydown, { passive: false });
+        deckEl.addEventListener('click', handleClick);
+        slidesEl.addEventListener('click', handleOverviewClick);
+        slidesEl.addEventListener('pointerdown', handlePointerDown);
+        slidesEl.addEventListener('pointerup', handlePointerUp);
+        slidesEl.addEventListener('pointercancel', handlePointerCancel);
+        window.addEventListener('hashchange', () => {
+          suppressHash = true;
+          parseHash();
+          suppressHash = false;
+        });
+
+        if (location.hash) {
+          parseHash();
+        } else {
+          updateUI();
+        }
+      };
+
+      init();
+
+      window.Deck = {
+        next,
+        prev,
+        first,
+        last,
+        applyIndex,
+        get index() {
+          return index;
+        },
+        get total() {
+          return total;
+        }
+      };
+    })();
+  </script>
+</body>
+</html>
